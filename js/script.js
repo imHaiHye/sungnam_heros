@@ -1,0 +1,788 @@
+// Global Variables
+let totalPoints = 12000;
+let weekCompleted = 2;
+let todayCompleted = 0;
+let selectedKeywords = [];
+let currentMissionType = '';
+let currentMissionDifficulty = '';
+let pinkMissions = 1;
+let greenMissions = 1;
+let yellowMissions = 0;
+
+// Diary Sample Data
+let diaryEntries = [
+    {
+        type: 'pink',
+        difficulty: 'easy',
+        mission: { title: '1분 칭찬하기', desc: '키워드 조합하여 애정 표현하기' },
+        keywordMessage: '"사랑해! 항상 고마워하고 최고야! 💕"',
+        familyResponse: '"어머, 갑자기 왜 그래요? 근데 기분 좋네요 😊"',
+        myResponse: '"그렇게 말해줘서 고마워! 앞으로 더 자주 표현할게 ^^"',
+        date: '2025년 11월 21일 오후 8:32',
+        points: 1000,
+        timestamp: new Date('2025-11-21T20:32:00').getTime()
+    },
+    {
+        type: 'green',
+        difficulty: 'easy',
+        mission: { title: '비행기 태우기', desc: '번쩍 들어 비행기 태우기' },
+        keywordMessage: '',
+        familyResponse: '"아빠 재밌어요! 더 높이 올려주세요!! 깔깔깔 😄"',
+        myResponse: '"우리 딸이 좋아하니까 아빠도 행복해! 매일 같이 놀자 ^^"',
+        date: '2025년 11월 20일 오후 6:15',
+        points: 1000,
+        timestamp: new Date('2025-11-20T18:15:00').getTime()
+    },
+    {
+        type: 'yellow',
+        difficulty: 'medium',
+        mission: { title: '라면 요리사', desc: '주말 아침, 아빠가 라면 요리사 되기' },
+        keywordMessage: '',
+        familyResponse: '"와 아빠가 요리해주니까 더 맛있어요! 내일도 해주세요~"',
+        myResponse: '"그럼! 아빠가 매주 주말 아침은 책임질게! 같이 먹으니 더 맛있네 ㅎㅎ"',
+        date: '2025년 11월 19일 오전 9:20',
+        points: 2000,
+        timestamp: new Date('2025-11-19T09:20:00').getTime()
+    }
+];
+
+// Badge Thresholds
+const badgeThresholds = [
+    { level: 0, points: 0, title: "입문 아빠", icon: "🌱", color: "linear-gradient(90deg, #718096, #4A5568)" },
+    { level: 1, points: 1000, title: "새내기 아빠", icon: "🌿", color: "linear-gradient(90deg, #94A3B8, #64748B)" },
+    { level: 2, points: 10000, title: "열정부자 아빠", icon: "🌷", color: "linear-gradient(90deg, #CD7F32, #A0522D)" },
+    { level: 3, points: 30000, title: "파워 아빠", icon: "🍎", color: "linear-gradient(90deg, #C0C0C0, #A9A9A9)" },
+    { level: 4, points: 50000, title: "슈퍼히어로 아빠", icon: "🌳", color: "linear-gradient(90deg, #FFD700, #FFA500)" },
+    { level: 5, points: 100000, title: "전설의 아빠", icon: "👑", color: "linear-gradient(90deg, #8B5CF6, #7C3AED)" }
+];
+
+// Mission Data
+const missionData = {
+    pink: {
+        title: '핑크 미션',
+        subtitle: 'To. 아내',
+        gradient: 'linear-gradient(135deg, #ff6b9d, #c44569)',
+        easy: { title: '1분 칭찬하기', desc: '키워드 조합하여 애정 표현하기', points: 1000 },
+        medium: { title: '10분 함께하기', desc: '아내 모국어로 애정 표현 배우기', points: 2000 },
+        hard: { title: '30분 데이트', desc: '자녀 잠시 맡기고 부부 동네 산책', points: 3000 }
+    },
+    green: {
+        title: '그린 미션',
+        subtitle: 'To. 자녀',
+        gradient: 'linear-gradient(135deg, #4ade80, #10b981)',
+        easy: { title: '비행기 태우기', desc: '번쩍 들어 비행기 태우기', points: 1000 },
+        medium: { title: '간식 타임', desc: '자녀와 간식 먹으며 오늘 일상 대화', points: 2000 },
+        hard: { title: '놀이터 가기', desc: '밖에서 같이 배드민턴/축구 시합', points: 3000 }
+    },
+    yellow: {
+        title: '옐로우 미션',
+        subtitle: 'To. 가족',
+        gradient: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+        easy: { title: '단톡방 활성화', desc: '가족 단톡방에 재미있는 사진 공유', points: 1000 },
+        medium: { title: '라면 요리사', desc: '주말 아침, 아빠가 라면 요리사 되기', points: 2000 },
+        hard: { title: '대청소 데이', desc: '다 같이 대청소하고 배달 음식 시켜먹기', points: 3000 }
+    }
+};
+
+// Badge Functions
+function getCurrentBadge() {
+    let currentBadge = badgeThresholds[0];
+    for (let i = badgeThresholds.length - 1; i >= 0; i--) {
+        if (totalPoints >= badgeThresholds[i].points) {
+            currentBadge = badgeThresholds[i];
+            break;
+        }
+    }
+    return currentBadge;
+}
+
+function getNextBadge() {
+    const current = getCurrentBadge();
+    const nextIndex = badgeThresholds.findIndex(b => b.level === current.level) + 1;
+    return nextIndex < badgeThresholds.length ? badgeThresholds[nextIndex] : null;
+}
+
+function updateBadgeDisplay() {
+    const current = getCurrentBadge();
+    const next = getNextBadge();
+    
+    document.getElementById('badgeIcon').textContent = current.icon;
+    document.getElementById('currentBadgeTitle').textContent = current.title;
+    document.getElementById('currentBadgeBenefit').textContent = next ? `✨ 다음 목표: ${next.title} 배지` : '✨ 전설적인 아빠! 존경합니다!';
+    document.getElementById('badgeProgress').style.background = current.color;
+
+    document.getElementById('headerUserBadge').textContent = current.icon;
+    document.querySelectorAll('.user-badge').forEach(el => el.textContent = current.icon);
+    
+    if (next) {
+        const currentThreshold = current.points;
+        const nextThreshold = next.points;
+        const progress = ((totalPoints - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
+        
+        document.getElementById('badgeProgress').style.width = Math.min(progress, 100) + '%';
+        document.getElementById('badgeProgressText').textContent = 
+            `다음 배지까지 ${(next.points - totalPoints).toLocaleString()}P`;
+        document.getElementById('nextBadgeInfo').textContent = 
+            `다음: ${next.icon} ${next.title}`;
+    } else {
+        document.getElementById('badgeProgress').style.width = '100%';
+        document.getElementById('badgeProgressText').textContent = '최고 배지 획득!';
+        document.getElementById('nextBadgeInfo').textContent = '👑 전설 달성!';
+    }
+}
+
+// Navigation Functions
+function navigateTo(pageId, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+
+// Mission Functions
+function selectMission(type, difficulty) {
+    currentMissionType = type;
+    currentMissionDifficulty = difficulty;
+    const mission = missionData[type];
+    const selectedMission = mission[difficulty];
+    
+    document.getElementById('missionHeader').style.background = mission.gradient;
+    document.getElementById('missionHeader').innerHTML = `
+        <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 10px;">
+                ${type === 'pink' ? '💖' : type === 'green' ? '💚' : '💛'}
+            </div>
+            <div style="font-size: 24px; font-weight: bold;">${selectedMission.title}</div>
+            <div style="opacity: 0.9; margin-top: 5px;">${selectedMission.desc}</div>
+            <div style="background: rgba(255,255,255,0.2); border-radius: 10px; padding: 8px; margin-top: 15px; display: inline-block;">
+                <span style="font-size: 12px; opacity: 0.8;">난이도: </span>
+                <span style="font-weight: bold;">${difficulty === 'easy' ? '쉬움' : difficulty === 'medium' ? '보통' : '어려움'}</span>
+            </div>
+            <div style="font-size: 20px; font-weight: bold; margin-top: 10px;">⭐ ${selectedMission.points.toLocaleString()}P</div>
+        </div>
+    `;
+
+    const keywordSection = document.getElementById('keywordSection');
+    keywordSection.style.display = type === 'pink' ? 'block' : 'none';
+
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('uploadPlaceholder').style.display = 'flex';
+    document.getElementById('missionPhotoInput').value = '';
+
+    document.getElementById('missionModal').classList.add('active');
+}
+
+function closeMissionModal() {
+    document.getElementById('missionModal').classList.remove('active');
+    selectedKeywords = [];
+    document.querySelectorAll('.keyword-btn').forEach(btn => btn.classList.remove('selected'));
+    document.getElementById('generatedMessage').textContent = '키워드를 선택해주세요 💖';
+    document.getElementById('familyResponse').value = '';
+    document.getElementById('myResponse').value = '';
+}
+
+function toggleKeyword(btn, keyword) {
+    btn.classList.toggle('selected');
+    if (selectedKeywords.includes(keyword)) {
+        selectedKeywords = selectedKeywords.filter(k => k !== keyword);
+    } else {
+        selectedKeywords.push(keyword);
+    }
+    updateGeneratedMessage();
+}
+
+function updateGeneratedMessage() {
+    const messageEl = document.getElementById('generatedMessage');
+    if (selectedKeywords.length === 0) {
+        messageEl.textContent = '키워드를 선택해주세요 💖';
+    } else if (selectedKeywords.length === 1) {
+        messageEl.textContent = `당신이 ${selectedKeywords[0]} 💕`;
+    } else if (selectedKeywords.length === 2) {
+        messageEl.textContent = `${selectedKeywords[0]}! 항상 ${selectedKeywords[1]} 💕`;
+    } else {
+        messageEl.textContent = `${selectedKeywords[0]}! ${selectedKeywords[1]}하고 ${selectedKeywords[2]}! 💕`;
+    }
+}
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('uploadPlaceholder').style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function completeMission() {
+    const familyResponse = document.getElementById('familyResponse').value;
+    const myResponse = document.getElementById('myResponse').value;
+    const photoInput = document.getElementById('missionPhotoInput');
+
+    if (!familyResponse || !myResponse) {
+        alert('가족 반응과 나의 재반응을 모두 입력해주세요!');
+        return;
+    }
+    
+    if (photoInput.files.length === 0) {
+        if(!confirm('인증샷 없이 완료하시겠습니까? (사진을 올리면 더 생생한 추억이 됩니다!)')) {
+            return;
+        }
+    }
+
+    const mission = missionData[currentMissionType];
+    const selectedMission = mission[currentMissionDifficulty];
+    const earnedPoints = selectedMission.points;
+    
+    totalPoints += earnedPoints;
+    todayCompleted++;
+    
+    if (currentMissionType === 'pink') pinkMissions++;
+    else if (currentMissionType === 'green') greenMissions++;
+    else if (currentMissionType === 'yellow') yellowMissions++;
+
+    const now = new Date();
+    const dateString = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours() > 12 ? '오후' : '오전'} ${now.getHours() > 12 ? now.getHours() - 12 : now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    const diaryEntry = {
+        type: currentMissionType,
+        difficulty: currentMissionDifficulty,
+        mission: selectedMission,
+        keywordMessage: selectedKeywords.length > 0 ? document.getElementById('generatedMessage').textContent : '',
+        familyResponse: familyResponse,
+        myResponse: myResponse,
+        date: dateString,
+        points: earnedPoints,
+        timestamp: now.getTime()
+    };
+    
+    diaryEntries.unshift(diaryEntry);
+    updateDiaryDisplay();
+    renderCalendar();
+
+    document.getElementById('totalPoints').textContent = totalPoints.toLocaleString() + 'P';
+    document.getElementById('earnedPoints').textContent = '+' + earnedPoints.toLocaleString() + 'P';
+    document.getElementById('todayCount').textContent = todayCompleted;
+    document.getElementById('todayProgress').style.width = Math.min(todayCompleted * 33, 100) + '%';
+
+    updateBadgeDisplay();
+
+    document.getElementById('pinkCount').textContent = pinkMissions;
+    document.getElementById('greenCount').textContent = greenMissions;
+    document.getElementById('yellowCount').textContent = yellowMissions;
+    document.getElementById('totalMissions').textContent = pinkMissions + greenMissions + yellowMissions;
+
+    closeMissionModal();
+    document.getElementById('celebration').classList.add('active');
+
+    setTimeout(() => {
+        document.getElementById('celebration').classList.remove('active');
+    }, 2500);
+}
+
+// Game Functions
+function showGame(gameType) {
+    const gameContent = document.getElementById('gameContent');
+    
+    if (gameType === 'quiz') {
+        const questions = [
+            "아내가 가장 좋아하는 음식은?",
+            "자녀가 제일 좋아하는 놀이는?",
+            "우리 가족이 처음 만난 장소는?",
+            "아내의 꿈은 무엇인가요?",
+            "자녀가 커서 되고 싶어하는 직업은?"
+        ];
+        
+        let quizHTML = `
+            <button class="back-btn" onclick="closeGame()">← 돌아가기</button>
+            <h2 style="font-size: 24px; font-weight: bold; margin: 20px 0; text-align: center;">
+                🎯 가족 Quiz
+            </h2>
+            <div style="text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 30px;">
+                서로에 대해 얼마나 알고 있는지 확인해보세요!
+            </div>
+        `;
+        
+        questions.forEach((q, i) => {
+            quizHTML += `
+                <div class="quiz-question">
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                        ${i + 1}. ${q}
+                    </div>
+                    <input type="text" placeholder="답을 입력하세요" style="margin-top: 10px;">
+                </div>
+            `;
+        });
+        
+        quizHTML += '<button class="btn-primary" onclick="alert(\'정말 잘 알고 계시네요! 🎉 가족과 함께 답을 확인해보세요.\')">답안 제출</button>';
+        gameContent.innerHTML = quizHTML;
+    }
+    else if (gameType === 'roleSwap') {
+        gameContent.innerHTML = `
+            <button class="back-btn" onclick="closeGame()">← 돌아가기</button>
+            <h2 style="font-size: 24px; font-weight: bold; margin: 20px 0; text-align: center;">
+                🔄 역할 교환 게임
+            </h2>
+            <div style="text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 30px;">
+                가족 구성원을 입력하면 랜덤으로 역할을 바꿔드려요!
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">가족 구성원 입력</label>
+                <div id="familyMembers">
+                    <div class="family-member-input">
+                        <input type="text" placeholder="예: 아빠" value="아빠">
+                    </div>
+                    <div class="family-member-input">
+                        <input type="text" placeholder="예: 엄마" value="엄마">
+                    </div>
+                    <div class="family-member-input">
+                        <input type="text" placeholder="예: 자녀 이름" value="민수">
+                    </div>
+                </div>
+                <button class="add-member-btn" onclick="addFamilyMember()">+ 가족 추가</button>
+            </div>
+
+            <button class="btn-primary" onclick="shuffleRoles()">🎲 역할 섞기!</button>
+
+            <div id="roleResults" style="margin-top: 30px;"></div>
+        `;
+    }
+    else if (gameType === 'empathy') {
+        gameContent.innerHTML = `
+            <button class="back-btn" onclick="closeGame()">← 돌아가기</button>
+            <h2 style="font-size: 24px; font-weight: bold; margin: 20px 0; text-align: center;">
+                💬 그랬구나~ 게임
+            </h2>
+            <div style="text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 30px;">
+                가족의 이야기를 경청하고 "그랬구나~" 하며 공감해주세요!
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 25px; margin: 20px 0; text-align: center;">
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">게임 방법</div>
+                <div style="font-size: 14px; line-height: 1.8; text-align: left;">
+                    1. 한 사람이 오늘 있었던 일을 이야기합니다<br>
+                    2. 듣는 사람은 중간에 끊지 않고 끝까지 경청합니다<br>
+                    3. 이야기가 끝나면 "그랬구나~"로 시작하여 공감합니다<br>
+                    4. 조언이나 해결책 제시는 금지! 오직 공감만!<br>
+                    5. 3분 동안 돌아가며 진행합니다
+                </div>
+            </div>
+
+            <div class="timer" id="empathyTimer">3:00</div>
+
+            <button class="btn-primary" onclick="startEmpathyTimer()">⏱️ 타이머 시작</button>
+        `;
+    }
+    else if (gameType === 'interview') {
+        const questions = [
+            "오늘 가장 기억에 남는 순간은?",
+            "요즘 가장 하고 싶은 것은 무엇인가요?",
+            "나에게 힘이 되는 말은?",
+            "어렸을 때 가장 기억에 남는 순간은?",
+            "10년 후 우리 가족은 어떤 모습일까요?"
+        ];
+
+        let interviewHTML = `
+            <button class="back-btn" onclick="closeGame()">← 돌아가기</button>
+            <h2 style="font-size: 24px; font-weight: bold; margin: 20px 0; text-align: center;">
+                🎤 가족 인터뷰
+            </h2>
+            <div style="text-align: center; font-size: 14px; opacity: 0.8; margin-bottom: 30px;">
+                서로에게 질문하고 답하며 더 깊이 알아가세요!
+            </div>
+        `;
+
+        questions.forEach((q, i) => {
+            interviewHTML += `
+                <div class="quiz-question">
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                        ${i + 1}. ${q}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.8; margin-top: 10px;">
+                        💡 가족에게 직접 물어보고 대화를 나눠보세요
+                    </div>
+                </div>
+            `;
+        });
+
+        interviewHTML += `
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 20px;">
+                <div style="font-weight: bold; margin-bottom: 10px;">💡 인터뷰 팁</div>
+                <div style="font-size: 14px; line-height: 1.6;">
+                    • 편안한 분위기에서 진행하세요<br>
+                    • 눈을 마주치며 이야기하세요<br>
+                    • 답변에 깊이 공감해주세요<br>
+                    • 서두르지 말고 충분히 대화하세요
+                </div>
+            </div>
+        `;
+
+        gameContent.innerHTML = interviewHTML;
+    }
+
+    document.getElementById('gameModal').classList.add('active');
+}
+
+function closeGame() {
+    document.getElementById('gameModal').classList.remove('active');
+}
+
+function addFamilyMember() {
+    const container = document.getElementById('familyMembers');
+    const div = document.createElement('div');
+    div.className = 'family-member-input';
+    div.innerHTML = `
+        <input type="text" placeholder="가족 이름">
+        <button class="remove-btn" onclick="this.parentElement.remove()">삭제</button>
+    `;
+    container.appendChild(div);
+}
+
+function shuffleRoles() {
+    const inputs = document.querySelectorAll('#familyMembers input');
+    const members = Array.from(inputs).map(input => input.value).filter(v => v);
+    
+    if (members.length < 2) {
+        alert('최소 2명 이상의 가족 구성원을 입력해주세요!');
+        return;
+    }
+
+    const shuffled = [...members].sort(() => Math.random() - 0.5);
+    let resultsHTML = '<h3 style="font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 20px;">🎉 역할이 바뀌었어요!</h3>';
+    
+    members.forEach((member, i) => {
+        resultsHTML += `
+            <div class="role-card">
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                    ${member} → ${shuffled[i]}
+                </div>
+                <div style="font-size: 14px; opacity: 0.9;">
+                    이제 ${member}님은 ${shuffled[i]}가 되어보세요!
+                </div>
+            </div>
+        `;
+    });
+
+    resultsHTML += `
+        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 20px; text-align: center;">
+            <div style="font-size: 14px; line-height: 1.6;">
+                💡 10분 동안 서로의 역할을 연기해보세요!<br>
+                말투, 행동, 습관까지 따라해보면서<br>
+                서로의 입장을 이해해봐요
+            </div>
+        </div>
+    `;
+
+    document.getElementById('roleResults').innerHTML = resultsHTML;
+}
+
+let empathyTimerInterval;
+function startEmpathyTimer() {
+    let timeLeft = 180;
+    const timerEl = document.getElementById('empathyTimer');
+    
+    clearInterval(empathyTimerInterval);
+    empathyTimerInterval = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(empathyTimerInterval);
+            timerEl.textContent = '완료!';
+            alert('시간 종료! 다음 사람 차례예요 😊');
+        }
+    }, 1000);
+}
+
+function showWritePost() {
+    document.getElementById('writePostModal').classList.add('active');
+}
+
+function closeWritePost() {
+    document.getElementById('writePostModal').classList.remove('active');
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postContent').value = '';
+}
+
+function submitPost() {
+    const title = document.getElementById('postTitle').value;
+    const content = document.getElementById('postContent').value;
+
+    if (!title || !content) {
+        alert('제목과 내용을 모두 입력해주세요!');
+        return;
+    }
+
+    alert('글이 등록되었습니다! 🎉');
+    closeWritePost();
+}
+
+function switchProgressTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    if (tab === 'week') {
+        document.getElementById('weekProgressView').style.display = 'block';
+        document.getElementById('monthProgressView').style.display = 'none';
+    } else {
+        document.getElementById('weekProgressView').style.display = 'none';
+        document.getElementById('monthProgressView').style.display = 'block';
+    }
+}
+
+function updateDiaryDisplay() {
+    const container = document.getElementById('diaryEntries');
+    
+    if (diaryEntries.length === 0) {
+        container.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 20px;">아직 기록된 미션이 없어요. 첫 미션을 완료해보세요!</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    diaryEntries.forEach(entry => {
+        const colorMap = {
+            pink: { gradient: '#ff6b9d', border: '#ff6b9d', icon: '💖', name: '핑크' },
+            green: { gradient: '#4ade80', border: '#4ade80', icon: '💚', name: '그린' },
+            yellow: { gradient: '#fbbf24', border: '#fbbf24', icon: '💛', name: '옐로우' }
+        };
+
+        const color = colorMap[entry.type];
+        const difficultyText = entry.difficulty === 'easy' ? '쉬움' : entry.difficulty === 'medium' ? '보통' : '어려움';
+
+        const entryHTML = `
+            <div class="post-card" style="border-left: 4px solid ${color.border}; animation: fadeIn 0.5s;" data-timestamp="${entry.timestamp}">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
+                            ${color.icon} ${color.name} 미션 - ${entry.mission.title}
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.7;">${entry.date} · ${difficultyText}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, ${color.gradient}, ${color.gradient}); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px;">
+                        +${entry.points.toLocaleString()}P
+                    </div>
+                </div>
+
+                ${entry.keywordMessage ? `
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💌 내가 한 말:</div>
+                        <div style="font-size: 15px; font-weight: bold; line-height: 1.5;">
+                            "${entry.keywordMessage}"
+                        </div>
+                    </div>
+                ` : `
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">📸 미션 수행:</div>
+                        <div style="font-size: 14px; line-height: 1.5;">
+                            ${entry.mission.desc}
+                        </div>
+                    </div>
+                `}
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                    <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💬 가족의 반응:</div>
+                    <div style="font-size: 14px; line-height: 1.5;">
+                        "${entry.familyResponse}"
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px;">
+                    <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">🔄 나의 재반응:</div>
+                    <div style="font-size: 14px; line-height: 1.5;">
+                        "${entry.myResponse}"
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', entryHTML);
+    });
+}
+
+function showBadgeInfo() {
+    document.getElementById('levelInfoModal').classList.add('active');
+}
+
+function closeLevelInfo() {
+    document.getElementById('levelInfoModal').classList.remove('active');
+}
+
+// Diary Tab Management
+let currentDiaryTab = 'timeline';
+let currentCalendarYear = 2025;
+let currentCalendarMonth = 11;
+
+function switchDiaryTab(tab) {
+    currentDiaryTab = tab;
+    document.querySelectorAll('#diaryPage .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    if (tab === 'timeline') {
+        document.getElementById('diaryTimelineView').style.display = 'block';
+        document.getElementById('diaryCalendarView').style.display = 'none';
+    } else {
+        document.getElementById('diaryTimelineView').style.display = 'none';
+        document.getElementById('diaryCalendarView').style.display = 'block';
+        renderCalendar();
+    }
+}
+
+function changeMonth(delta) {
+    currentCalendarMonth += delta;
+    if (currentCalendarMonth > 12) {
+        currentCalendarMonth = 1;
+        currentCalendarYear++;
+    } else if (currentCalendarMonth < 1) {
+        currentCalendarMonth = 12;
+        currentCalendarYear--;
+    }
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    document.getElementById('calendarMonthTitle').textContent = 
+        `${currentCalendarYear}년 ${monthNames[currentCalendarMonth - 1]}`;
+
+    const firstDay = new Date(currentCalendarYear, currentCalendarMonth - 1, 1).getDay();
+    const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
+
+    const calendarGrid = document.getElementById('calendarGrid');
+    calendarGrid.innerHTML = '';
+
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.style.padding = '15px';
+        calendarGrid.appendChild(emptyDay);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${currentCalendarYear}년 ${currentCalendarMonth}월 ${day}일`;
+        const missionsOnDay = diaryEntries.filter(entry => entry.date.includes(dateStr));
+        
+        const dayCell = document.createElement('div');
+        dayCell.style.cssText = `
+            padding: 15px 10px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: ${missionsOnDay.length > 0 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255,255,255,0.05)'};
+            border: ${missionsOnDay.length > 0 ? '2px solid #4ade80' : '1px solid rgba(255,255,255,0.1)'};
+            position: relative;
+        `;
+
+        dayCell.innerHTML = `
+            <div style="font-size: 16px; font-weight: ${missionsOnDay.length > 0 ? 'bold' : 'normal'};">${day}</div>
+            ${missionsOnDay.length > 0 ? `<div style="font-size: 10px; color: #4ade80; margin-top: 3px;">●${missionsOnDay.length}개</div>` : ''}
+        `;
+
+        dayCell.onmouseover = function() {
+            this.style.background = missionsOnDay.length > 0 ? 'rgba(74, 222, 128, 0.3)' : 'rgba(255,255,255,0.1)';
+        };
+        dayCell.onmouseout = function() {
+            this.style.background = missionsOnDay.length > 0 ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255,255,255,0.05)';
+        };
+
+        if (missionsOnDay.length > 0) {
+            dayCell.onclick = () => showDateMissions(currentCalendarYear, currentCalendarMonth, day, missionsOnDay);
+        }
+
+        calendarGrid.appendChild(dayCell);
+    }
+}
+
+function showDateMissions(year, month, day, missions) {
+    const container = document.getElementById('selectedDateMissions');
+    
+    const colorMap = {
+        pink: { gradient: '#ff6b9d', border: '#ff6b9d', icon: '💖', name: '핑크' },
+        green: { gradient: '#4ade80', border: '#4ade80', icon: '💚', name: '그린' },
+        yellow: { gradient: '#fbbf24', border: '#fbbf24', icon: '💛', name: '옐로우' }
+    };
+
+    let html = `
+        <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 15px;">
+            <div style="font-size: 20px; font-weight: bold; text-align: center;">
+                📅 ${year}년 ${month}월 ${day}일
+            </div>
+            <div style="font-size: 14px; text-align: center; opacity: 0.8; margin-top: 5px;">
+                총 ${missions.length}개 미션 완료
+            </div>
+        </div>
+    `;
+
+    missions.forEach(entry => {
+        const color = colorMap[entry.type];
+        const difficultyText = entry.difficulty === 'easy' ? '쉬움' : entry.difficulty === 'medium' ? '보통' : '어려움';
+
+        html += `
+            <div class="post-card" style="border-left: 4px solid ${color.border}; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
+                            ${color.icon} ${color.name} 미션 - ${entry.mission.title}
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.7;">${entry.date} · ${difficultyText}</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, ${color.gradient}, ${color.gradient}); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px;">
+                        +${entry.points.toLocaleString()}P
+                    </div>
+                </div>
+
+                ${entry.keywordMessage ? `
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💌 내가 한 말:</div>
+                        <div style="font-size: 15px; font-weight: bold; line-height: 1.5;">
+                            "${entry.keywordMessage}"
+                        </div>
+                    </div>
+                ` : `
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">📸 미션 수행:</div>
+                        <div style="font-size: 14px; line-height: 1.5;">
+                            ${entry.mission.desc}
+                        </div>
+                    </div>
+                `}
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                    <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💬 가족의 반응:</div>
+                    <div style="font-size: 14px; line-height: 1.5;">
+                        "${entry.familyResponse}"
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                    <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">🔄 나의 재반응:</div>
+                    <div style="font-size: 14px; line-height: 1.5;">
+                        "${entry.myResponse}"
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+// Initialize
+updateBadgeDisplay();
+updateDiaryDisplay();
+renderCalendar();
