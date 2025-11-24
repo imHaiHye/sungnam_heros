@@ -11,6 +11,18 @@ let yellowMissions = 0;
 
 // Diary Sample Data
 let diaryEntries = [
+        {
+        type: 'yellow',
+        difficulty: 'medium',
+        mission: { title: '라면 요리사', desc: '주말 아침, 아빠가 라면 요리사 되기' },
+        keywordMessage: '',
+        familyResponse: '"와 아빠가 요리해주니까 더 맛있어요! 내일도 해주세요~"',
+        myResponse: '"그럼! 아빠가 매주 주말 아침은 책임질게! 같이 먹으니 더 맛있네 ㅎㅎ"',
+        date: '2025년 11월 21일 오전 9:20',
+        points: 2000,
+        timestamp: new Date('2025-11-21T09:20:00').getTime(),
+        image: 'images/라면.jpg'
+    },
     {
         type: 'pink',
         difficulty: 'easy',
@@ -18,32 +30,24 @@ let diaryEntries = [
         keywordMessage: '"사랑해! 항상 고마워하고 최고야! 💕"',
         familyResponse: '"어머, 갑자기 왜 그래요? 근데 기분 좋네요 😊"',
         myResponse: '"그렇게 말해줘서 고마워! 앞으로 더 자주 표현할게 ^^"',
-        date: '2025년 11월 21일 오후 8:32',
+        date: '2025년 11월 19일 오후 8:32',
         points: 1000,
-        timestamp: new Date('2025-11-21T20:32:00').getTime()
+        timestamp: new Date('2025-11-19T20:32:00').getTime(),
+        image: null
     },
     {
         type: 'green',
         difficulty: 'easy',
         mission: { title: '비행기 태우기', desc: '번쩍 들어 비행기 태우기' },
         keywordMessage: '',
-        familyResponse: '"아빠 재밌어요! 더 높이 올려주세요!! 깔깔깔 😄"',
+        familyResponse: '"아빠 재밌어요! 더 높이 올려주세요!! ㅎㅎ 😄"',
         myResponse: '"우리 딸이 좋아하니까 아빠도 행복해! 매일 같이 놀자 ^^"',
         date: '2025년 11월 20일 오후 6:15',
         points: 1000,
-        timestamp: new Date('2025-11-20T18:15:00').getTime()
-    },
-    {
-        type: 'yellow',
-        difficulty: 'medium',
-        mission: { title: '라면 요리사', desc: '주말 아침, 아빠가 라면 요리사 되기' },
-        keywordMessage: '',
-        familyResponse: '"와 아빠가 요리해주니까 더 맛있어요! 내일도 해주세요~"',
-        myResponse: '"그럼! 아빠가 매주 주말 아침은 책임질게! 같이 먹으니 더 맛있네 ㅎㅎ"',
-        date: '2025년 11월 19일 오전 9:20',
-        points: 2000,
-        timestamp: new Date('2025-11-19T09:20:00').getTime()
+        timestamp: new Date('2025-11-20T18:15:00').getTime(),
+        image: null
     }
+
 ];
 
 // Badge Thresholds
@@ -232,10 +236,14 @@ function completeMission() {
         return;
     }
     
+    let uploadedImage = null;
     if (photoInput.files.length === 0) {
         if(!confirm('인증샷 없이 완료하시겠습니까? (사진을 올리면 더 생생한 추억이 됩니다!)')) {
             return;
         }
+    } else {
+        // 이미지가 업로드된 경우
+        uploadedImage = document.getElementById('imagePreview').src;
     }
 
     const mission = missionData[currentMissionType];
@@ -261,7 +269,8 @@ function completeMission() {
         myResponse: myResponse,
         date: dateString,
         points: earnedPoints,
-        timestamp: now.getTime()
+        timestamp: now.getTime(),
+        image: uploadedImage
     };
     
     diaryEntries.unshift(diaryEntry);
@@ -583,11 +592,17 @@ function updateDiaryDisplay() {
                     </div>
                 </div>
 
+                ${entry.image ? `
+                    <div style="margin-bottom: 15px;">
+                        <img src="${entry.image}" alt="미션 인증샷" style="width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover;">
+                    </div>
+                ` : ''}
+
                 ${entry.keywordMessage ? `
                     <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
                         <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💌 내가 한 말:</div>
                         <div style="font-size: 15px; font-weight: bold; line-height: 1.5;">
-                            "${entry.keywordMessage}"
+                            ${entry.keywordMessage}
                         </div>
                     </div>
                 ` : `
@@ -602,14 +617,14 @@ function updateDiaryDisplay() {
                 <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
                     <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💬 가족의 반응:</div>
                     <div style="font-size: 14px; line-height: 1.5;">
-                        "${entry.familyResponse}"
+                        ${entry.familyResponse}
                     </div>
                 </div>
 
                 <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px;">
                     <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">🔄 나의 재반응:</div>
                     <div style="font-size: 14px; line-height: 1.5;">
-                        "${entry.myResponse}"
+                        ${entry.myResponse}
                     </div>
                 </div>
             </div>
@@ -625,6 +640,221 @@ function showBadgeInfo() {
 
 function closeLevelInfo() {
     document.getElementById('levelInfoModal').classList.remove('active');
+}
+
+// Notice Detail Functions
+function showNoticeDetail(type) {
+    const content = document.getElementById('noticeDetailContent');
+    
+    const noticeData = {
+        mentoring: {
+            title: '🤝 깐부 멘토링 신청',
+            banner: 'linear-gradient(135deg, #667eea, #764ba2)',
+            description: '선배 아빠들의 노하우를 배우고, 함께 성장하는 멘토링 프로그램',
+            details: `
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">📋 프로그램 안내</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        <strong>• 대상:</strong> 히어로즈 활동 1개월 이상 아빠<br>
+                        <strong>• 멘토:</strong> 전설/슈퍼히어로 배지 보유 선배 아빠<br>
+                        <strong>• 방식:</strong> 1:1 또는 소그룹 (3-4명)<br>
+                        <strong>• 주제:</strong> 육아 노하우, 아내와의 소통, 미션 팁 등<br>
+                        <strong>• 혜택:</strong> 멘티/멘토 모두 추가 포인트 지급
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">🎯 신청 방법</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        1. 아래 신청하기 버튼 클릭<br>
+                        2. 간단한 소개와 관심 주제 작성<br>
+                        3. 담당자가 3일 내 매칭 결과 연락<br>
+                        4. 첫 만남 일정 조율 및 시작!
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="alert('신청이 접수되었습니다! 담당자가 곧 연락드릴게요 😊')">
+                    ✅ 멘토링 신청하기
+                </button>
+            `
+        },
+        meal: {
+            title: '🍽️ 아빠들 식사 모임',
+            banner: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            description: '맛있는 식사와 함께 아빠들끼리 이야기 나누는 시간',
+            details: `
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">📅 모임 정보</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        <strong>• 일시:</strong> 12월 7일 (토) 오후 6시<br>
+                        <strong>• 장소:</strong> 성남시 분당구 판교역 근처 식당 (신청자에게 개별 안내)<br>
+                        <strong>• 인원:</strong> 선착순 20명<br>
+                        <strong>• 회비:</strong> 1인 2만원 (식사비 포함)<br>
+                        <strong>• 혜택:</strong> 성남사랑상품권 1만원 지급
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">💬 이런 이야기를 나눠요</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        • 육아 고민 공유 및 해결 방법<br>
+                        • 미션 수행 노하우와 재미있는 에피소드<br>
+                        • 아내/자녀와의 관계 개선 경험담<br>
+                        • 다문화 가정의 독특한 문화 이야기<br>
+                        • 그냥 편하게 수다 떨기! 😄
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="alert('식사 모임 신청이 완료되었습니다! 🎉')">
+                    ✅ 모임 참가 신청
+                </button>
+            `
+        },
+        sports: {
+            title: '🎯 다문화 가족 운동회',
+            banner: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            description: '온 가족이 함께 뛰고 웃는 신나는 운동회!',
+            details: `
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">🏃‍♂️ 행사 정보</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        <strong>• 일시:</strong> 12월 14일 (토) 오전 10시 ~ 오후 2시<br>
+                        <strong>• 장소:</strong> 성남시 종합운동장<br>
+                        <strong>• 대상:</strong> 히어로즈 참여 가족 (자녀 동반 필수)<br>
+                        <strong>• 참가비:</strong> 무료<br>
+                        <strong>• 준비물:</strong> 편한 운동복, 운동화, 개인 물병
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">🎪 프로그램</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        <strong>10:00 - 10:30</strong> 등록 및 팀 구성<br>
+                        <strong>10:30 - 11:00</strong> 개회식 및 준비운동<br>
+                        <strong>11:00 - 12:30</strong> 가족 단위 게임 대회<br>
+                        • 아빠와 자녀 2인3각 달리기<br>
+                        • 온 가족 릴레이<br>
+                        • 엄마아빠 줄다리기<br>
+                        • 보물찾기 미션<br>
+                        <strong>12:30 - 14:00</strong> 점심 식사 및 경품 추첨
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">🎁 경품</h3>
+                    <div style="font-size: 14px; line-height: 1.8;">
+                        • 1등팀: 성남사랑상품권 10만원<br>
+                        • 2등팀: 성남사랑상품권 5만원<br>
+                        • 3등팀: 성남사랑상품권 3만원<br>
+                        • 전원: 참가 기념품 + 도시락
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="alert('운동회 참가 신청이 완료되었습니다! 🏆')">
+                    ✅ 운동회 참가 신청
+                </button>
+            `
+        }
+    };
+    
+    const notice = noticeData[type];
+    
+    content.innerHTML = `
+        <div style="background: ${notice.banner}; border-radius: 20px; padding: 30px; text-align: center; margin: 20px 0;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px;">${notice.title}</h2>
+            <div style="font-size: 16px; opacity: 0.9;">${notice.description}</div>
+        </div>
+        ${notice.details}
+    `;
+    
+    document.getElementById('noticeDetailModal').classList.add('active');
+}
+
+function closeNoticeDetail() {
+    document.getElementById('noticeDetailModal').classList.remove('active');
+}
+
+// Toggle Comments (for future use)
+function toggleComments(element) {
+    // 클릭 시 확장 효과 등을 추가할 수 있습니다
+    // 현재는 단순히 클릭 이벤트만 처리
+    console.log('Post clicked');
+}
+
+// Notification Modal Functions
+function showNotificationModal() {
+    document.getElementById('notificationModal').classList.add('active');
+}
+
+function closeNotificationModal() {
+    document.getElementById('notificationModal').classList.remove('active');
+}
+
+// Referral Modal Functions
+function showReferralModal() {
+    document.getElementById('referralModal').classList.add('active');
+}
+
+function closeReferralModal() {
+    document.getElementById('referralModal').classList.remove('active');
+}
+
+function copyReferralCode() {
+    const code = 'HERO2024';
+    
+    // 클립보드에 복사 시도
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            alert('추천인 코드가 복사되었습니다! 📋\n친구에게 공유해보세요.');
+        }).catch(() => {
+            // 실패 시 폴백
+            fallbackCopyCode(code);
+        });
+    } else {
+        // 구형 브라우저 대응
+        fallbackCopyCode(code);
+    }
+}
+
+function fallbackCopyCode(code) {
+    // 임시 textarea 생성
+    const textarea = document.createElement('textarea');
+    textarea.value = code;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+        document.execCommand('copy');
+        alert('추천인 코드가 복사되었습니다! 📋\n친구에게 공유해보세요.');
+    } catch (err) {
+        alert('코드: HERO2024\n수동으로 복사해주세요!');
+    }
+    
+    document.body.removeChild(textarea);
+}
+
+function shareReferral() {
+    const shareText = '🦸‍♂️ 성남 다문화 아빠 히어로즈에 초대합니다!\n\n' +
+                     '재미있는 미션으로 가족과 더 가까워지고,\n' +
+                     '성남사랑상품권도 받아요!\n\n' +
+                     '추천인 코드: HERO2024\n' +
+                     '가입하면 우리 둘 다 1만원 상품권! 🎁';
+    
+    // Web Share API 지원 여부 확인
+    if (navigator.share) {
+        navigator.share({
+            title: '성남 다문화 아빠 히어로즈 초대',
+            text: shareText
+        }).then(() => {
+            console.log('공유 성공!');
+        }).catch((error) => {
+            console.log('공유 취소:', error);
+        });
+    } else {
+        // Web Share API 미지원 시 클립보드 복사
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('초대 메시지가 복사되었습니다!\n친구에게 붙여넣기 해주세요. 📤');
+            });
+        } else {
+            alert(shareText + '\n\n위 내용을 복사해서 친구에게 보내주세요!');
+        }
+    }
 }
 
 // Diary Tab Management
@@ -752,11 +982,17 @@ function showDateMissions(year, month, day, missions) {
                     </div>
                 </div>
 
+                ${entry.image ? `
+                    <div style="margin-bottom: 15px;">
+                        <img src="${entry.image}" alt="미션 인증샷" style="width: 100%; border-radius: 12px; max-height: 300px; object-fit: cover;">
+                    </div>
+                ` : ''}
+
                 ${entry.keywordMessage ? `
                     <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
                         <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💌 내가 한 말:</div>
                         <div style="font-size: 15px; font-weight: bold; line-height: 1.5;">
-                            "${entry.keywordMessage}"
+                            ${entry.keywordMessage}
                         </div>
                     </div>
                 ` : `
@@ -771,14 +1007,14 @@ function showDateMissions(year, month, day, missions) {
                 <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
                     <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">💬 가족의 반응:</div>
                     <div style="font-size: 14px; line-height: 1.5;">
-                        "${entry.familyResponse}"
+                        ${entry.familyResponse}
                     </div>
                 </div>
 
-                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 12px;">
+                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px;">
                     <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px;">🔄 나의 재반응:</div>
                     <div style="font-size: 14px; line-height: 1.5;">
-                        "${entry.myResponse}"
+                        ${entry.myResponse}
                     </div>
                 </div>
             </div>

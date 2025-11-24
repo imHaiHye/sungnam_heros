@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>다문화 아빠 히어로즈</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -31,6 +31,23 @@
                         </div>
                     </div>
                     <div style="font-size: 30px;">→</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div class="widget-preview" onclick="showReferralModal()" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 5px;">🎁</div>
+                        <div style="font-size: 14px; font-weight: bold;">친구 초대</div>
+                        <div style="font-size: 11px; opacity: 0.9; margin-top: 3px;">상품권 받기</div>
+                    </div>
+                </div>
+                <div class="widget-preview" onclick="showNotificationModal()" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 5px;">🔔</div>
+                        <div style="font-size: 14px; font-weight: bold;">알림 미리보기</div>
+                        <div style="font-size: 11px; opacity: 0.9; margin-top: 3px;">넛지 알림 확인</div>
+                    </div>
                 </div>
             </div>
 
@@ -138,8 +155,8 @@
                     <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.3s;" onclick="selectMission('green', 'medium')" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <div>
-                                <div style="font-weight: bold;">간식 타임</div>
-                                <div style="font-size: 13px; opacity: 0.85; margin-top: 5px;">자녀와 간식 먹으며 오늘 일상 대화</div>
+                                <div style="font-weight: bold;">동화 타임</div>
+                                <div style="font-size: 13px; opacity: 0.85; margin-top: 5px;">이중언어 동화책 읽어주기</div>
                             </div>
                             <div style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px;">보통</div>
                         </div>
@@ -246,79 +263,100 @@
         <div id="communityPage" class="page">
              <div class="section-title">💬 아빠들의 커뮤니티</div>
             
+            <!-- 공지사항 배너 섹션 -->
+            <div class="notice-banner-section">
+                <div class="notice-banner" onclick="showNoticeDetail('mentoring')">
+                    <div class="notice-icon">🤝</div>
+                    <div class="notice-content">
+                        <div class="notice-title">깐부 멘토링 신청</div>
+                        <div class="notice-subtitle">선배 아빠에게 육아 노하우 배우기</div>
+                    </div>
+                    <div class="notice-arrow">→</div>
+                </div>
+
+                <div class="notice-banner" onclick="showNoticeDetail('meal')">
+                    <div class="notice-icon">🍽️</div>
+                    <div class="notice-content">
+                        <div class="notice-title">아빠들 식사 모임</div>
+                        <div class="notice-subtitle">12월 7일 (토) 오후 6시</div>
+                    </div>
+                    <div class="notice-arrow">→</div>
+                </div>
+
+                <div class="notice-banner" onclick="showNoticeDetail('sports')">
+                    <div class="notice-icon">🎯</div>
+                    <div class="notice-content">
+                        <div class="notice-title">다문화 가족 운동회</div>
+                        <div class="notice-subtitle">12월 14일 (토) 오전 10시</div>
+                    </div>
+                    <div class="notice-arrow">→</div>
+                </div>
+            </div>
+
             <button class="btn-primary" onclick="showWritePost()">✏️ 새 글 쓰기</button>
 
             <div id="postsList">
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-avatar">황</div>
-                        <div>
-                            <div style="font-weight: bold; display: flex; align-items: center; gap: 5px;">황혁주 아빠 <span class="user-badge">🥉</span></div>
-                            <div style="font-size: 12px; opacity: 0.7;">5분 전</div>
+                <!-- 당근 스타일 게시글 -->
+                <div class="daangn-post-card">
+                    <div class="daangn-post-content">
+                        <div class="daangn-post-header">
+                            <span class="daangn-author">황혁주 아빠 <span class="user-badge">👑</span></span>
+                            <span class="daangn-time">5분 전</span>
+                        </div>
+                        <div class="daangn-post-title">주말 아침에 아내 간식 사줬어요! 🎉</div>
+                        <div class="daangn-post-text">
+                            가족 Quiz 게임 했는데, 아내가 호떡을 좋아하더라고요! 
+                            그래서 주말에 같이 호떡 먹으러 갔습니다. 가족들과 좋은 시간 보냈어요😊
+                        </div>
+                        <div class="daangn-post-stats">
+                            <span>❤️ 12</span>
+                            <span>💬 3</span>
                         </div>
                     </div>
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">오늘 처음으로 핑크 미션 완료했어요! 🎉</div>
-                        <div style="font-size: 14px; line-height: 1.5;">
-                            솔직히 처음엔 쑥스러웠는데, 아내가 엄청 좋아하더라구요. 
-                            "당신 진짜 사랑해" 한마디에 아내 눈물 글썽... 
-                            이렇게 간단한 말 한마디가 이렇게 큰 힘이 될 줄 몰랐어요!
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 15px; font-size: 13px; opacity: 0.8;">
-                        <span>❤️ 12</span>
-                        <span>💬 3</span>
-                    </div>
-                    <div class="comment-section">
-                        <div class="comment">
-                            <strong>임상우:</strong> 저도 오늘 해봤는데 정말 좋더라구요! 👍
-                        </div>
-                        <div class="comment">
-                            <strong>박판교:</strong> 대단하세요! 저도 용기내서 해봐야겠어요
-                        </div>
-                    </div>
-                </div>
-                 <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-avatar">이</div>
-                        <div>
-                             <div style="font-weight: bold; display: flex; align-items: center; gap: 5px;">이우곤 아빠 <span class="user-badge">🏅</span></div>
-                            <div style="font-size: 12px; opacity: 0.7;">1시간 전</div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">가족 Quiz 게임 추천합니다!</div>
-                        <div style="font-size: 14px; line-height: 1.5;">
-                            어제 저녁에 온 가족이 모여서 가족 Quiz 했는데요, 
-                            아내가 좋아하는 꽃이 뭔지도 몰랐던 제 자신이 부끄럽더라구요 😅
-                            앞으로 더 관심 가져야겠어요!
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 15px; font-size: 13px; opacity: 0.8;">
-                        <span>❤️ 8</span>
-                        <span>💬 2</span>
+                    <div class="daangn-post-image">
+                        <img src="images/호떡.jpg" alt="고구마">
                     </div>
                 </div>
 
-                <div class="post-card">
-                    <div class="post-header">
-                        <div class="post-avatar">염</div>
-                        <div>
-                             <div style="font-weight: bold; display: flex; align-items: center; gap: 5px;">염기영 아빠 <span class="user-badge">🥈</span></div>
-                            <div style="font-size: 12px; opacity: 0.7;">3시간 전</div>
+                <div class="daangn-post-card">
+                    <div class="daangn-post-content">
+                        <div class="daangn-post-header">
+                            <span class="daangn-author">이우곤 아빠 <span class="user-badge">🏅</span></span>
+                            <span class="daangn-time">1시간 전</span>
+                        </div>
+                        <div class="daangn-post-title">아침에 토스트 만들어줬어요!</div>
+                        <div class="daangn-post-text">
+                            어제 저녁에 요리 미션 하려고 토스트 만들었는데요, 
+                            치즈랑 토마토 올리니까 진짜 맛있더라구요. 가족들이 칭찬해줬어요ㅎㅎ
+                        </div>
+                        <div class="daangn-post-stats">
+                            <span>❤️ 8</span>
+                            <span>💬 2</span>
                         </div>
                     </div>
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">이번 주 연속 7일 달성! 🏆</div>
-                        <div style="font-size: 14px; line-height: 1.5;">
+                    <div class="daangn-post-image">
+                        <img src="images/토스트.jpg" alt="토스트">
+                    </div>
+                </div>
+
+                <div class="daangn-post-card">
+                    <div class="daangn-post-content">
+                        <div class="daangn-post-header">
+                            <span class="daangn-author">염기영 아빠 <span class="user-badge">🥈</span></span>
+                            <span class="daangn-time">3시간 전</span>
+                        </div>
+                        <div class="daangn-post-title">오늘 아내랑 카페 데이트! 🏆</div>
+                        <div class="daangn-post-text">
                             처음에는 '내가 할 수 있을까?' 했는데, 
-                            이제는 미션 안 하면 뭔가 허전해요. 
-                            가족들도 아빠가 달라졌다고 좋아하네요 ㅎㅎ
+                            오늘 아내랑 카페 가서 커피 마시며 대화했어요. 가족들도 아빠가 달라졌다고 좋아하네요 ㅎㅎ
+                        </div>
+                        <div class="daangn-post-stats">
+                            <span>❤️ 25</span>
+                            <span>💬 5</span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 15px; font-size: 13px; opacity: 0.8;">
-                        <span>❤️ 25</span>
-                        <span>💬 5</span>
+                    <div class="daangn-post-image">
+                        <img src="images/카페.jpg" alt="카페">
                     </div>
                 </div>
             </div>
@@ -775,6 +813,172 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- 공지사항 상세 모달 -->
+    <div id="noticeDetailModal" class="modal">
+        <div class="modal-content">
+            <button class="back-btn" onclick="closeNoticeDetail()">← 돌아가기</button>
+            <div id="noticeDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- 알림 미리보기 모달 -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">🔔 이런 알림이 와요!</h2>
+                <span class="close-btn" onclick="closeNotificationModal()">&times;</span>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                <div style="font-size: 14px; line-height: 1.6; opacity: 0.9;">
+                    상황에 맞는 넛지 알림으로<br>
+                    자연스럽게 가족과 함께하는 시간을 만들어보세요!
+                </div>
+            </div>
+
+            <!-- 알림 예시들 -->
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- 평일 퇴근 시간 알림 -->
+                <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; border-left: 4px solid #10b981;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <div style="font-size: 24px;">📱</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">평일 오후 6:30</div>
+                            <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">
+                                퇴근하셨나요? 🚗
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                                오늘은 1분만 투자해보세요<br>
+                                💖 <strong>아내에게 칭찬하기</strong> 미션
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 주말 아침 알림 -->
+                <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; border-left: 4px solid #fbbf24;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <div style="font-size: 24px;">📱</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">토요일 오전 9:00</div>
+                            <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">
+                                좋은 아침이에요! ☀️
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                                주말엔 가족과 함께!<br>
+                                💛 <strong>라면 요리사</strong> 미션 어때요?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 주간 독려 알림 -->
+                <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; border-left: 4px solid #8b5cf6;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <div style="font-size: 24px;">📱</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">일요일 오후 2:00</div>
+                            <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">
+                                조금만 더 힘내세요! 💪
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                                이번 주 2개 완료했어요<br>
+                                목표 3개까지 <strong>1개</strong> 남았어요!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 배지 획득 알림 -->
+                <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; border-left: 4px solid #ec4899;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <div style="font-size: 24px;">📱</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">실시간</div>
+                            <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">
+                                🎉 새 배지 획득!
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                                축하합니다!<br>
+                                <strong>🌷 열정부자 아빠</strong> 배지를 획득했어요
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 15px; padding: 20px; margin-top: 20px; text-align: center;">
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">💡 알림 설정 팁</div>
+                <div style="font-size: 13px; line-height: 1.6; opacity: 0.95;">
+                    브라우저 설정에서 알림을 허용하면<br>
+                    딱 맞는 타이밍에 미션을 추천해드려요!
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="closeNotificationModal()">확인</button>
+        </div>
+    </div>
+
+    <!-- 추천인 코드 모달 -->
+    <div id="referralModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">🎁 친구 초대하기</h2>
+                <span class="close-btn" onclick="closeReferralModal()">&times;</span>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center;">
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">
+                    친구 1명 초대하면
+                </div>
+                <div style="font-size: 40px; font-weight: bold; margin-bottom: 15px;">
+                    각 1만원 💰
+                </div>
+                <div style="font-size: 14px; opacity: 0.9;">
+                    추천인과 신규 가입자 모두에게<br>
+                    성남사랑상품권 지급!
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px; text-align: center;">
+                    나의 추천인 코드
+                </div>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #fbbf24; font-family: monospace;">
+                        HERO2024
+                    </div>
+                </div>
+                <button class="btn-secondary" onclick="copyReferralCode()" style="width: 100%;">
+                    📋 코드 복사하기
+                </button>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">
+                    📱 초대 방법
+                </div>
+                <div style="font-size: 14px; line-height: 1.8;">
+                    <strong>1.</strong> 위 추천인 코드 복사<br>
+                    <strong>2.</strong> 친구에게 공유<br>
+                    <strong>3.</strong> 친구가 가입 시 코드 입력<br>
+                    <strong>4.</strong> 둘 다 상품권 1만원씩 GET! 🎉
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; text-align: center;">
+                <div style="font-size: 13px; opacity: 0.9; line-height: 1.6;">
+                    💡 <strong>친구가 많을수록 더 많이!</strong><br>
+                    초대 인원 제한 없이 무제한 혜택 가능
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="shareReferral()" style="margin-top: 20px;">
+                📤 친구에게 공유하기
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

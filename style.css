@@ -518,6 +518,151 @@ select:focus {
     font-size: 13px;
 }
 
+/* Notice Banner Styles */
+.notice-banner-section {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notice-banner {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: 12px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.notice-banner:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.notice-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.notice-content {
+    flex: 1;
+}
+
+.notice-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.notice-subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.notice-arrow {
+    font-size: 24px;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+/* Daangn Style Post Card */
+.daangn-post-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.daangn-post-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.daangn-post-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.daangn-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.daangn-author {
+    font-size: 12px;
+    opacity: 0.9;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.daangn-time {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+.daangn-post-title {
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.4;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.daangn-post-text {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.85;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.daangn-post-stats {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: auto;
+}
+
+.daangn-post-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.daangn-post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* Family Member Inputs */
 .family-member-input {
     display: flex;
