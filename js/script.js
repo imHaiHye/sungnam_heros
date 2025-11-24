@@ -455,10 +455,16 @@ function shuffleRoles() {
         alert('최소 2명 이상의 가족 구성원을 입력해주세요!');
         return;
     }
+    // To avoid assigning someone to themselves, create a derangement by
+    // rotating the list by a random offset between 1 and n-1. Rotation
+    // guarantees no fixed points (no member maps to themselves) when
+    // members.length > 1.
+    const n = members.length;
+    const offset = Math.floor(Math.random() * (n - 1)) + 1; // 1..n-1
+    const shuffled = members.map((_, i) => members[(i + offset) % n]);
 
-    const shuffled = [...members].sort(() => Math.random() - 0.5);
     let resultsHTML = '<h3 style="font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 20px;">🎉 역할이 바뀌었어요!</h3>';
-    
+
     members.forEach((member, i) => {
         resultsHTML += `
             <div class="role-card">
