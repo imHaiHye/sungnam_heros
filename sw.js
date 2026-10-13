@@ -2,7 +2,7 @@
 // Online users always get the latest deploy; offline users get the last copy
 // they loaded, so a dad on a factory floor with no signal can still log a mission.
 
-const CACHE = 'heroes-v1';
+const CACHE = 'heroes-v2';
 
 const PRECACHE = [
     './',
@@ -25,6 +25,7 @@ const PRECACHE = [
     'js/data/locales/en.js',
     'js/data/locales/vi.js',
     'js/data/locales/zh.js',
+    'js/ui/icons.js',
     'js/ui/pages.js',
     'js/ui/photo.js',
     'js/ui/sheets.js',

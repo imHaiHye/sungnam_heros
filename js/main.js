@@ -11,6 +11,7 @@ import { REFERRAL_CODE, sampleEntries, samplePosts } from './data/seed.js';
 import { PAGES } from './ui/pages.js';
 import { renderSheet, phraseList, newMemberRow, roleResults } from './ui/sheets.js';
 import { compressPhoto } from './ui/photo.js';
+import { check } from './ui/icons.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 
@@ -99,7 +100,7 @@ function celebrate(points, newBadge) {
     const el = $('#celebrate');
     el.innerHTML = String(html`
         <div class="celebrate-card">
-            <div class="celebrate-icon" aria-hidden="true">🏆</div>
+            <div class="celebrate-icon">${check}</div>
             <strong class="celebrate-title">${t('celebrate.title')}</strong>
             <div class="celebrate-points">+${num(points)}P</div>
             <div>${t('celebrate.sub')}</div>
@@ -337,7 +338,7 @@ const actions = {
         };
         tick();
         timerId = setInterval(tick, 250);
-        el.textContent = `⏱️ ${t('empathy.restart')}`;
+        el.textContent = t('empathy.restart');
     },
 
     speak(el) {

@@ -5,8 +5,6 @@ export const LEVELS = ['easy', 'medium', 'hard'];
 
 export const LEVEL_POINTS = { easy: 1000, medium: 2000, hard: 3000 };
 
-export const TYPE_EMOJI = { pink: '💖', green: '💚', yellow: '💛' };
-
 export const MISSIONS = MISSION_TYPES.flatMap((type) =>
     LEVELS.map((level) => ({
         id: `${type}.${level}`,
@@ -42,7 +40,7 @@ export const REACTIONS = [
 ];
 
 export const REPLIES = [
-    { key: 'thanks', emoji: '🙏' },
-    { key: 'metoo', emoji: '😄' },
-    { key: 'again', emoji: '🤝' },
+    { key: 'thanks' },
+    { key: 'metoo' },
+    { key: 'again' },
 ];

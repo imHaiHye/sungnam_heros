@@ -7,9 +7,9 @@ import { addDays, startOfDay } from '../core/domain.js';
 export const REFERRAL_CODE = 'HERO2024';
 
 export const NOTICES = [
-    { id: 'mentoring', icon: '🤝', rows: ['who', 'mentor', 'how', 'topic', 'benefit'] },
-    { id: 'meal', icon: '🍽️', rows: ['when', 'where', 'limit', 'fee', 'benefit'] },
-    { id: 'sports', icon: '🎯', rows: ['when', 'where', 'who', 'fee', 'bring', 'prize'] },
+    { id: 'mentoring', rows: ['who', 'mentor', 'how', 'topic', 'benefit'] },
+    { id: 'meal', rows: ['when', 'where', 'limit', 'fee', 'benefit'] },
+    { id: 'sports', rows: ['when', 'where', 'who', 'fee', 'bring', 'prize'] },
 ];
 
 const SAMPLE_ENTRIES = [
