@@ -1,0 +1,13 @@
+{
+    "name": "sungnam-heros",
+    "private": true,
+    "type": "module",
+    "description": "성남 다문화 아빠 히어로즈 - mission app for fathers in multicultural families",
+    "scripts": {
+        "start": "node scripts/serve.mjs",
+        "test": "node --test"
+    },
+    "engines": {
+        "node": ">=20"
+    }
+}
