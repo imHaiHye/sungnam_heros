@@ -2,7 +2,7 @@
 // Online users always get the latest deploy; offline users get the last copy
 // they loaded, so a dad on a factory floor with no signal can still log a mission.
 
-const CACHE = 'heroes-v2';
+const CACHE = 'heroes-v3';
 
 const PRECACHE = [
     './',
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (event) => {
     if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
 
     event.respondWith(
-        fetch(request)
+        fetch(request, { cache: 'no-cache' })
             .then((response) => {
                 if (response.ok) {
                     const copy = response.clone();
